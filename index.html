@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe | Крестики-нолики</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+    <!-- Основной контейнер -->
+    <div class="container">
+        <!-- Шапка с балансами -->
+        <header class="header">
+            <div class="user-info">
+                <div class="avatar" id="userAvatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-details">
+                    <span class="username" id="username">Игрок</span>
+                    <div class="balances">
+                        <div class="balance real-balance">
+                            <i class="fas fa-coins"></i>
+                            <span id="realBalance">0.00</span>
+                        </div>
+                        <div class="balance game-balance">
+                            <i class="fas fa-gamepad"></i>
+                            <span id="gameBalance">1000</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="btn-icon" id="profileBtn" title="Профиль">
+                    <i class="fas fa-user-circle"></i>
+                </button>
+                <button class="btn-icon" id="historyBtn" title="История">
+                    <i class="fas fa-history"></i>
+                </button>
+                <button class="btn-icon" id="adminBtn" title="Админ-панель" style="display: none;">
+                    <i class="fas fa-cog"></i>
+                </button>
+                <button class="btn-icon" id="partnerBtn" title="Партнёр-панель" style="display: none;">
+                    <i class="fas fa-handshake"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Основное меню -->
+        <main class="main-menu">
+            <h1 class="game-title">
+                <i class="fas fa-times"></i>
+                <span>КРЕСТИКИ-НОЛИКИ</span>
+                <i class="far fa-circle"></i>
+            </h1>
+            
+            <div class="menu-cards">
+                <!-- Игра с ботом -->
+                <div class="menu-card" id="playWithBot">
+                    <div class="card-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3>Игра с ботом</h3>
+                    <p>Сыграйте против ИИ-соперника</p>
+                    <div class="card-badge">Бесплатно</div>
+                </div>
+                
+                <!-- Онлайн игра -->
+                <div class="menu-card" id="playOnline">
+                    <div class="card-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <h3>Онлайн игра</h3>
+                    <p>Сразитесь с реальными игроками</p>
+                    <div class="card-badge">Ставки</div>
+                </div>
+                
+                <!-- Создать лобби -->
+                <div class="menu-card" id="createLobby">
+                    <div class="card-icon">
+                        <i class="fas fa-plus-circle"></i>
+                    </div>
+                    <h3>Создать лобби</h3>
+                    <p>Пригласите друга поиграть</p>
+                    <div class="card-badge">Приватно</div>
+                </div>
+                
+                <!-- Быстрая игра -->
+                <div class="menu-card" id="quickPlay">
+                    <div class="card-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>Быстрая игра</h3>
+                    <p>Найти соперника за 30 сек</p>
+                    <div class="card-badge">Рейтинг</div>
+                </div>
+            </div>
+            
+            <!-- Нижняя панель действий -->
+            <div class="bottom-actions">
+                <button class="btn-primary" id="depositBtn">
+                    <i class="fas fa-wallet"></i> Пополнить
+                </button>
+                <button class="btn-secondary" id="withdrawBtn">
+                    <i class="fas fa-money-bill-wave"></i> Вывести
+                </button>
+                <button class="btn-outline" id="rulesBtn">
+                    <i class="fas fa-book"></i> Правила
+                </button>
+            </div>
+        </main>
+
+        <!-- Модальные окна -->
+        <div class="modal" id="betModal">
+            <div class="modal-content">
+                <h2>Сделайте ставку</h2>
+                <div class="bet-options">
+                    <div class="balance-selector">
+                        <h3>Тип баланса:</h3>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="balanceType" value="game" checked>
+                                <span>Игровой баланс</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="balanceType" value="real">
+                                <span>Реальный баланс</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="stake-amount">
+                        <h3>Сумма ставки:</h3>
+                        <div class="amount-buttons">
+                            <button class="amount-btn" data-amount="10">10</button>
+                            <button class="amount-btn" data-amount="50">50</button>
+                            <button class="amount-btn" data-amount="100">100</button>
+                            <button class="amount-btn" data-amount="500">500</button>
+                            <button class="amount-btn" data-amount="1000">1000</button>
+                        </div>
+                        <div class="custom-amount">
+                            <input type="number" id="customAmount" placeholder="Другая сумма" min="1">
+                        </div>
+                    </div>
+                    
+                    <div class="commission-notice" id="commissionNotice" style="display: none;">
+                        <i class="fas fa-info-circle"></i>
+                        <span>При выигрыше бот удержит 5% комиссии</span>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn-secondary" id="cancelBet">Отмена</button>
+                    <button class="btn-primary" id="confirmBet">Играть</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Уведомление о комиссии -->
+        <div class="notification" id="commissionNotification">
+            <div class="notification-content">
+                <i class="fas fa-percentage"></i>
+                <span>Бот удержал 5% комиссии: <span id="commissionAmount">0</span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Подключение скриптов -->
+    <script src="storage.js"></script>
+    <script src="auth.js"></script>
+    <script src="balance.js"></script>
+    <script src="commission.js"></script>
+    <script src="bets.js"></script>
+    <script src="game.js"></script>
+    <script src="bot.js"></script>
+    <script src="multiplayer.js"></script>
+    <script src="notifications.js"></script>
+    <script src="profile.js"></script>
+    <script src="admin.js"></script>
+    <script src="partner.js"></script>
+    <!-- В конец body (после всех скриптов) добавьте: -->
+    <script src="main.js"></script>
+    
+    <script>
+        // Инициализация приложения
+        document.addEventListener('DOMContentLoaded', function() {
+            // Инициализация Telegram Web App
+            if (window.Telegram && Telegram.WebApp) {
+                Telegram.WebApp.ready();
+                Telegram.WebApp.expand();
+                
+                // Получаем данные пользователя из Telegram
+                const user = Telegram.WebApp.initDataUnsafe.user;
+                if (user) {
+                    document.getElementById('username').textContent = user.first_name || 'Игрок';
+                    if (user.photo_url) {
+                        document.getElementById('userAvatar').innerHTML = 
+                            `<img src="${user.photo_url}" alt="Аватар">`;
+                    }
+                }
+            }
+            
+            // Загрузка балансов
+            loadBalances();
+            
+            // Показ/скрытие кнопок админки
+            checkAdminAccess();
+            
+            // Обработчики меню
+            document.getElementById('playWithBot').addEventListener('click', () => {
+                selectGameMode('bot');
+            });
+            
+            document.getElementById('playOnline').addEventListener('click', () => {
+                selectGameMode('online');
+            });
+            
+            document.getElementById('profileBtn').addEventListener('click', () => {
+                window.location.href = 'profile.html';
+            });
+            
+            document.getElementById('adminBtn').addEventListener('click', () => {
+                window.location.href = 'admin.html';
+            });
+            
+            // Инициализация системы ставок
+            initBetSystem();
+        });
+        
+        function selectGameMode(mode) {
+            currentGameMode = mode;
+            document.getElementById('betModal').style.display = 'flex';
+            
+            // Показ уведомления о комиссии для онлайн игр с реальным балансом
+            if (mode === 'online') {
+                document.getElementById('commissionNotice').style.display = 'flex';
+            } else {
+                document.getElementById('commissionNotice').style.display = 'none';
+            }
+        }
+        
+        function loadBalances() {
+            const realBalance = getRealBalance();
+            const gameBalance = getGameBalance();
+            
+            document.getElementById('realBalance').textContent = realBalance.toFixed(2);
+            document.getElementById('gameBalance').textContent = gameBalance;
+        }
+        
+        function checkAdminAccess() {
+            const user = getCurrentUser();
+            if (user && user.isAdmin) {
+                document.getElementById('adminBtn').style.display = 'block';
+            }
+            if (user && user.isPartner) {
+                document.getElementById('partnerBtn').style.display = 'block';
+            }
+        }
+    </script>
+    
+</body>
+</html>
