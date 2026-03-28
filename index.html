@@ -1,262 +1,516 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en-US">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tic-Tac-Toe | Крестики-нолики</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-</head>
-<body>
-    <!-- Основной контейнер -->
-    <div class="container">
-        <!-- Шапка с балансами -->
-        <header class="header">
-            <div class="user-info">
-                <div class="avatar" id="userAvatar">
-                    <i class="fas fa-user"></i>
-                </div>
-                <div class="user-details">
-                    <span class="username" id="username">Игрок</span>
-                    <div class="balances">
-                        <div class="balance real-balance">
-                            <i class="fas fa-coins"></i>
-                            <span id="realBalance">0.00</span>
-                        </div>
-                        <div class="balance game-balance">
-                            <i class="fas fa-gamepad"></i>
-                            <span id="gameBalance">1000</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="header-actions">
-                <button class="btn-icon" id="profileBtn" title="Профиль">
-                    <i class="fas fa-user-circle"></i>
-                </button>
-                <button class="btn-icon" id="historyBtn" title="История">
-                    <i class="fas fa-history"></i>
-                </button>
-                <button class="btn-icon" id="adminBtn" title="Админ-панель" style="display: none;">
-                    <i class="fas fa-cog"></i>
-                </button>
-                <button class="btn-icon" id="partnerBtn" title="Партнёр-панель" style="display: none;">
-                    <i class="fas fa-handshake"></i>
-                </button>
-            </div>
-        </header>
-
-        <!-- Основное меню -->
-        <main class="main-menu">
-            <h1 class="game-title">
-                <i class="fas fa-times"></i>
-                <span>КРЕСТИКИ-НОЛИКИ</span>
-                <i class="far fa-circle"></i>
-            </h1>
-            
-            <div class="menu-cards">
-                <!-- Игра с ботом -->
-                <div class="menu-card" id="playWithBot">
-                    <div class="card-icon">
-                        <i class="fas fa-robot"></i>
-                    </div>
-                    <h3>Игра с ботом</h3>
-                    <p>Сыграйте против ИИ-соперника</p>
-                    <div class="card-badge">Бесплатно</div>
-                </div>
-                
-                <!-- Онлайн игра -->
-                <div class="menu-card" id="playOnline">
-                    <div class="card-icon">
-                        <i class="fas fa-globe"></i>
-                    </div>
-                    <h3>Онлайн игра</h3>
-                    <p>Сразитесь с реальными игроками</p>
-                    <div class="card-badge">Ставки</div>
-                </div>
-                
-                <!-- Создать лобби -->
-                <div class="menu-card" id="createLobby">
-                    <div class="card-icon">
-                        <i class="fas fa-plus-circle"></i>
-                    </div>
-                    <h3>Создать лобби</h3>
-                    <p>Пригласите друга поиграть</p>
-                    <div class="card-badge">Приватно</div>
-                </div>
-                
-                <!-- Быстрая игра -->
-                <div class="menu-card" id="quickPlay">
-                    <div class="card-icon">
-                        <i class="fas fa-bolt"></i>
-                    </div>
-                    <h3>Быстрая игра</h3>
-                    <p>Найти соперника за 30 сек</p>
-                    <div class="card-badge">Рейтинг</div>
-                </div>
-            </div>
-            
-            <!-- Нижняя панель действий -->
-            <div class="bottom-actions">
-                <button class="btn-primary" id="depositBtn">
-                    <i class="fas fa-wallet"></i> Пополнить
-                </button>
-                <button class="btn-secondary" id="withdrawBtn">
-                    <i class="fas fa-money-bill-wave"></i> Вывести
-                </button>
-                <button class="btn-outline" id="rulesBtn">
-                    <i class="fas fa-book"></i> Правила
-                </button>
-            </div>
-        </main>
-
-        <!-- Модальные окна -->
-        <div class="modal" id="betModal">
-            <div class="modal-content">
-                <h2>Сделайте ставку</h2>
-                <div class="bet-options">
-                    <div class="balance-selector">
-                        <h3>Тип баланса:</h3>
-                        <div class="radio-group">
-                            <label class="radio-label">
-                                <input type="radio" name="balanceType" value="game" checked>
-                                <span>Игровой баланс</span>
-                            </label>
-                            <label class="radio-label">
-                                <input type="radio" name="balanceType" value="real">
-                                <span>Реальный баланс</span>
-                            </label>
-                        </div>
-                    </div>
-                    
-                    <div class="stake-amount">
-                        <h3>Сумма ставки:</h3>
-                        <div class="amount-buttons">
-                            <button class="amount-btn" data-amount="10">10</button>
-                            <button class="amount-btn" data-amount="50">50</button>
-                            <button class="amount-btn" data-amount="100">100</button>
-                            <button class="amount-btn" data-amount="500">500</button>
-                            <button class="amount-btn" data-amount="1000">1000</button>
-                        </div>
-                        <div class="custom-amount">
-                            <input type="number" id="customAmount" placeholder="Другая сумма" min="1">
-                        </div>
-                    </div>
-                    
-                    <div class="commission-notice" id="commissionNotice" style="display: none;">
-                        <i class="fas fa-info-circle"></i>
-                        <span>При выигрыше бот удержит 5% комиссии</span>
-                    </div>
-                </div>
-                <div class="modal-actions">
-                    <button class="btn-secondary" id="cancelBet">Отмена</button>
-                    <button class="btn-primary" id="confirmBet">Играть</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Уведомление о комиссии -->
-        <div class="notification" id="commissionNotification">
-            <div class="notification-content">
-                <i class="fas fa-percentage"></i>
-                <span>Бот удержал 5% комиссии: <span id="commissionAmount">0</span></span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Подключение скриптов -->
-    <script src="storage.js"></script>
-    <script src="auth.js"></script>
-    <script src="balance.js"></script>
-    <script src="commission.js"></script>
-    <script src="bets.js"></script>
-    <script src="game.js"></script>
-    <script src="bot.js"></script>
-    <script src="multiplayer.js"></script>
-    <script src="notifications.js"></script>
-    <script src="profile.js"></script>
-    <script src="admin.js"></script>
-    <script src="partner.js"></script>
-    <!-- В конец body (после всех скриптов) добавьте: -->
-    <script src="main.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     
-    <script>
-        // Инициализация приложения
-        document.addEventListener('DOMContentLoaded', function() {
-            // Инициализация Telegram Web App
-            if (window.Telegram && Telegram.WebApp) {
-                Telegram.WebApp.ready();
-                Telegram.WebApp.expand();
-                
-                // Получаем данные пользователя из Telegram
-                const user = Telegram.WebApp.initDataUnsafe.user;
-                if (user) {
-                    document.getElementById('username').textContent = user.first_name || 'Игрок';
-                    if (user.photo_url) {
-                        document.getElementById('userAvatar').innerHTML = 
-                            `<img src="${user.photo_url}" alt="Аватар">`;
-                    }
-                }
+    <!-- PRIMARY SEO TAGS - US AUDIENCE -->
+    <title>$500 FREE Bonus | Top2BetX & EZCasino | Best US Sportsbook & Casino 2026</title>
+    <meta name="description" content="Claim $500 FREE bonus at Top2BetX and EZCasino! Register with promo code FREE500 and get $500 instantly. #1 US sportsbook and online casino for 2026. NFL, NBA, slots, blackjack and more.">
+    <meta name="keywords" content="$500 free bonus, top2betx, ezcasino, top2betx.com, ezcasino.su, sportsbook bonus, casino bonus USA, free $500, promo code FREE500, best US betting site, online casino USA, NFL betting, NBA odds, slots bonus, blackjack online, american sportsbook, casino welcome bonus">
+    <meta name="author" content="Premium Gaming Partners">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="googlebot" content="index, follow">
+    <meta name="bingbot" content="index, follow">
+    <link rel="canonical" href="https://www.yourdomain.com/">
+    
+    <!-- GEO TARGETING -->
+    <meta name="geo.region" content="US">
+    <meta name="geo.placename" content="United States">
+    <meta name="distribution" content="global">
+    <meta name="target" content="all">
+    <meta name="audience" content="all">
+    
+    <!-- SOCIAL MEDIA OPTIMIZATION -->
+    <meta property="og:title" content="$500 FREE Bonus - Top2BetX & EZCasino | US Players Welcome">
+    <meta property="og:description" content="Get $500 FREE with promo code FREE500. Join the #1 sportsbook and casino for American players. Fast payouts, best odds, 5000+ games.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://placehold.co/1200x630/0a0f1e/ffd700?text=%24500+FREE+BONUS">
+    <meta property="og:site_name" content="Premium Gaming Bonus">
+    <meta property="og:locale" content="en_US">
+    
+    <!-- TWITTER CARDS -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="$500 FREE Bonus - Top2BetX & EZCasino">
+    <meta name="twitter:description" content="Claim $500 FREE with promo code FREE500. Best US sportsbook and casino 2026.">
+    <meta name="twitter:image" content="https://placehold.co/1200x600/0a0f1e/ffd700?text=%24500+FREE">
+    
+    <!-- STRUCTURED DATA -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "name": "Top Gaming Bonuses for US Players",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Top2BetX Sportsbook",
+                "url": "https://top2betx.com/?promo=free500",
+                "description": "$500 FREE sportsbook bonus with code FREE500"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "EZCasino",
+                "url": "https://ezcasino.su/?promo=free500",
+                "description": "$500 FREE casino bonus with code FREE500"
             }
-            
-            // Загрузка балансов
-            loadBalances();
-            
-            // Показ/скрытие кнопок админки
-            checkAdminAccess();
-            
-            // Обработчики меню
-            document.getElementById('playWithBot').addEventListener('click', () => {
-                selectGameMode('bot');
-            });
-            
-            document.getElementById('playOnline').addEventListener('click', () => {
-                selectGameMode('online');
-            });
-            
-            document.getElementById('profileBtn').addEventListener('click', () => {
-                window.location.href = 'profile.html';
-            });
-            
-            document.getElementById('adminBtn').addEventListener('click', () => {
-                window.location.href = 'admin.html';
-            });
-            
-            // Инициализация системы ставок
-            initBetSystem();
-        });
-        
-        function selectGameMode(mode) {
-            currentGameMode = mode;
-            document.getElementById('betModal').style.display = 'flex';
-            
-            // Показ уведомления о комиссии для онлайн игр с реальным балансом
-            if (mode === 'online') {
-                document.getElementById('commissionNotice').style.display = 'flex';
-            } else {
-                document.getElementById('commissionNotice').style.display = 'none';
-            }
-        }
-        
-        function loadBalances() {
-            const realBalance = getRealBalance();
-            const gameBalance = getGameBalance();
-            
-            document.getElementById('realBalance').textContent = realBalance.toFixed(2);
-            document.getElementById('gameBalance').textContent = gameBalance;
-        }
-        
-        function checkAdminAccess() {
-            const user = getCurrentUser();
-            if (user && user.isAdmin) {
-                document.getElementById('adminBtn').style.display = 'block';
-            }
-            if (user && user.isPartner) {
-                document.getElementById('partnerBtn').style.display = 'block';
-            }
-        }
+        ]
+    }
     </script>
     
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'Poppins', 'Inter', system-ui, -apple-system, 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #0a0a0f 0%, #0f0f1a 50%, #0a0a0f 100%);
+            color: #ffffff;
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        
+        /* HEADER */
+        .header {
+            background: rgba(5, 5, 10, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.25);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 16px 0;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .logo h1 {
+            font-size: 26px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffd700, #ffaa33);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .trust-badge {
+            background: rgba(255, 215, 0, 0.12);
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 600;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+        
+        .trust-badge span {
+            color: #ffd700;
+        }
+        
+        /* HERO SECTION */
+        .hero {
+            text-align: center;
+            padding: 50px 0 30px;
+        }
+        
+        .main-bonus {
+            background: linear-gradient(145deg, #101018, #0a0a12);
+            border-radius: 56px;
+            padding: 48px 32px;
+            border: 1px solid rgba(255, 215, 0, 0.35);
+            box-shadow: 0 30px 50px -20px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,215,0,0.1);
+            margin-bottom: 50px;
+        }
+        
+        .bonus-amount {
+            font-size: 74px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffd700, #ffaa33, #ff884d);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1;
+            margin-bottom: 16px;
+        }
+        
+        .promo-code {
+            background: #1a1a2a;
+            display: inline-block;
+            padding: 14px 40px;
+            border-radius: 60px;
+            font-family: 'Courier New', monospace;
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: 3px;
+            margin: 24px 0;
+            border: 2px solid #ffd700;
+            color: #ffd700;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+        }
+        
+        .code-hint {
+            font-size: 14px;
+            color: #8a9ac0;
+            margin-top: 8px;
+        }
+        
+        /* DUAL CARDS SECTION */
+        .platforms {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 40px;
+            padding: 30px 0 60px;
+        }
+        
+        .platform-card {
+            background: linear-gradient(145deg, #111118, #0c0c14);
+            border-radius: 48px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            box-shadow: 0 20px 35px -15px rgba(0,0,0,0.5);
+        }
+        
+        .platform-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(255, 215, 0, 0.5);
+            box-shadow: 0 30px 45px -15px rgba(255, 215, 0, 0.15);
+        }
+        
+        .card-header {
+            padding: 32px 28px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .platform-icon {
+            font-size: 56px;
+            margin-bottom: 16px;
+        }
+        
+        .platform-name {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+        
+        .platform-name.top2betx {
+            background: linear-gradient(135deg, #ffd700, #ffaa33);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .platform-name.ezcasino {
+            background: linear-gradient(135deg, #ffd700, #ff6b9d);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .card-badge {
+            background: rgba(255, 215, 0, 0.15);
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 12px;
+        }
+        
+        .features-list {
+            padding: 28px;
+            list-style: none;
+        }
+        
+        .features-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .features-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .check {
+            color: #ffd700;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .card-cta {
+            display: block;
+            text-align: center;
+            background: linear-gradient(135deg, #ffd700, #ffaa33);
+            color: #0a0a12;
+            font-weight: 800;
+            font-size: 20px;
+            padding: 18px 24px;
+            margin: 0 24px 28px 24px;
+            border-radius: 60px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .card-cta:hover {
+            transform: scale(1.02);
+            background: linear-gradient(135deg, #ffe066, #ffbb44);
+            box-shadow: 0 10px 25px -8px rgba(255, 215, 0, 0.4);
+        }
+        
+        .bonus-tag {
+            font-size: 14px;
+            text-align: center;
+            margin-top: -12px;
+            padding-bottom: 20px;
+            color: #ffd700;
+        }
+        
+        /* FEATURES SECTION */
+        .global-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 24px;
+            padding: 40px 0;
+            text-align: center;
+        }
+        
+        .feature-item {
+            background: rgba(255,255,255,0.02);
+            padding: 24px 16px;
+            border-radius: 32px;
+            border: 1px solid rgba(255,215,0,0.1);
+        }
+        
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+        
+        /* LEAGUES & GAMES */
+        .trust-section {
+            background: rgba(0,0,0,0.3);
+            border-radius: 40px;
+            padding: 40px 24px;
+            margin: 30px 0;
+            text-align: center;
+        }
+        
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .tag {
+            background: rgba(255,215,0,0.1);
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 15px;
+        }
+        
+        /* FOOTER */
+        .footer {
+            background: #030308;
+            padding: 45px 0 35px;
+            margin-top: 60px;
+            text-align: center;
+            border-top: 1px solid rgba(255,215,0,0.1);
+            font-size: 12px;
+            color: #6a7a9a;
+        }
+        
+        .footer a {
+            color: #ffd700;
+            text-decoration: none;
+        }
+        
+        @media (max-width: 768px) {
+            .bonus-amount { font-size: 44px; }
+            .promo-code { font-size: 22px; padding: 10px 24px; letter-spacing: 2px; }
+            .platform-name { font-size: 26px; }
+            .card-cta { font-size: 18px; padding: 14px 20px; }
+            .platforms { gap: 25px; }
+        }
+        
+        @media (max-width: 480px) {
+            .container { padding: 0 16px; }
+            .main-bonus { padding: 32px 20px; }
+            .features-list li { font-size: 14px; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <div class="container header-content">
+        <div class="logo">
+            <h1>🎯 BONUS<span style="color:#ffd700;">HUB</span></h1>
+        </div>
+        <div class="trust-badge">
+            🇺🇸 <span>#1 US Gaming Bonuses 2026</span> | Trusted by 150,000+ Americans
+        </div>
+    </div>
+</header>
+
+<main>
+    <div class="container">
+        <!-- HERO SECTION - UNIVERSAL PROMO -->
+        <div class="hero">
+            <div class="main-bonus">
+                <div class="bonus-amount">🔥 $500 FREE BONUS 🔥</div>
+                <p style="font-size: 18px; margin: 12px 0 8px;">Exclusive Welcome Offer for US Players</p>
+                <div class="promo-code">FREE500</div>
+                <p style="margin: 16px 0 8px; font-size: 16px;">Use promo code <strong style="color:#ffd700;">FREE500</strong> at registration and get <strong>$500 INSTANTLY</strong></p>
+                <p class="code-hint">✅ Works on BOTH platforms below | ✅ One code = $500 on each site</p>
+            </div>
+        </div>
+        
+        <!-- DUAL PLATFORM CARDS -->
+        <div class="platforms">
+            
+            <!-- CARD 1: TOP2BETX - SPORTSBOOK -->
+            <div class="platform-card">
+                <div class="card-header">
+                    <div class="platform-icon">🏈🎲</div>
+                    <div class="platform-name top2betx">TOP2BET<span style="color:#ffd700;">X</span></div>
+                    <div class="card-badge">🏆 #1 US SPORTSBOOK 2026</div>
+                </div>
+                <div class="bonus-tag">⚡ $500 FREE with code FREE500 ⚡</div>
+                <ul class="features-list">
+                    <li><span class="check">✓</span> NFL • NBA • MLB • NHL • NCAA</li>
+                    <li><span class="check">✓</span> Best odds on American sports</li>
+                    <li><span class="check">✓</span> Live betting & player props</li>
+                    <li><span class="check">✓</span> Fast withdrawals (24h)</li>
+                    <li><span class="check">✓</span> Crypto & fiat accepted</li>
+                    <li><span class="check">✓</span> 24/7 US-based support</li>
+                </ul>
+                <a href="https://top2betx.com/?promo=free500" class="card-cta" rel="nofollow">
+                    🎰 CLAIM $500 AT TOP2BETX 🎰
+                </a>
+                <p style="text-align: center; font-size: 12px; padding-bottom: 20px; color: #ffd700;">↓ Promo FREE500 auto-applied ↓</p>
+            </div>
+            
+            <!-- CARD 2: EZCASINO.SU - ONLINE CASINO -->
+            <div class="platform-card">
+                <div class="card-header">
+                    <div class="platform-icon">🎰🃏</div>
+                    <div class="platform-name ezcasino">EZ<span style="color:#ffd700;">CASINO</span>.SU</div>
+                    <div class="card-badge">🎲 #1 US ONLINE CASINO 2026</div>
+                </div>
+                <div class="bonus-tag">⚡ $500 FREE with code FREE500 ⚡</div>
+                <ul class="features-list">
+                    <li><span class="check">✓</span> 5000+ Slots & Jackpots</li>
+                    <li><span class="check">✓</span> Blackjack • Roulette • Craps</li>
+                    <li><span class="check">✓</span> Live Dealer Games</li>
+                    <li><span class="check">✓</span> Instant crypto withdrawals</li>
+                    <li><span class="check">✓</span> US Licensed & Regulated</li>
+                    <li><span class="check">✓</span> Mobile-friendly platform</li>
+                </ul>
+                <a href="https://ezcasino.su/?promo=free500" class="card-cta" rel="nofollow">
+                    🎁 CLAIM $500 AT EZCASINO 🎁
+                </a>
+                <p style="text-align: center; font-size: 12px; padding-bottom: 20px; color: #ffd700;">↓ Promo FREE500 auto-applied ↓</p>
+            </div>
+        </div>
+        
+        <!-- GLOBAL FEATURES -->
+        <div class="global-features">
+            <div class="feature-item">
+                <div class="feature-icon">💰</div>
+                <h3>$500 FREE Each</h3>
+                <p>Get $500 on Top2BetX + $500 on EZCasino = $1000 total bonus</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">⚡</div>
+                <h3>Instant Activation</h3>
+                <p>Bonus credited immediately after registration</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">🇺🇸</div>
+                <h3>US Players Only</h3>
+                <p>Exclusive offers for American bettors</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">🔒</div>
+                <h3>Secure & Trusted</h3>
+                <p>SSL encryption • Licensed platforms</p>
+            </div>
+        </div>
+        
+        <!-- TRUST SECTION -->
+        <div class="trust-section">
+            <h2 style="font-size: 28px; margin-bottom: 16px;">🏆 Trusted by American Bettors & Casino Players 🏆</h2>
+            <p style="margin-bottom: 20px;">Join over 150,000+ US players who already claimed their $500 bonus with code <strong style="color:#ffd700;">FREE500</strong></p>
+            <div class="tags">
+                <span class="tag">NFL Betting</span>
+                <span class="tag">NBA Odds</span>
+                <span class="tag">MLB Sportsbook</span>
+                <span class="tag">NHL Lines</span>
+                <span class="tag">Online Slots</span>
+                <span class="tag">Blackjack</span>
+                <span class="tag">Live Dealer</span>
+                <span class="tag">Fast Payouts</span>
+            </div>
+        </div>
+        
+        <!-- FINAL CTA SECTION -->
+        <div style="text-align: center; padding: 30px 0 50px;">
+            <p style="font-size: 18px; margin-bottom: 20px;">🎲 Don't miss out - Limited time offer for US players 🎲</p>
+            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;">
+                <a href="https://top2betx.com/?promo=free500" style="background: #1e2a3a; padding: 14px 32px; border-radius: 50px; color: #ffd700; text-decoration: none; font-weight: bold; border: 1px solid #ffd700;" rel="nofollow">🏈 Top2BetX - $500 FREE</a>
+                <a href="https://ezcasino.su/?promo=free500" style="background: #2a1a3a; padding: 14px 32px; border-radius: 50px; color: #ffd700; text-decoration: none; font-weight: bold; border: 1px solid #ffd700;" rel="nofollow">🎰 EZCasino - $500 FREE</a>
+            </div>
+            <p style="margin-top: 30px; font-size: 13px; color: #8a9ac0;">🔑 Remember: Use promo code <strong style="color:#ffd700;">FREE500</strong> on both sites | 18+ | T&Cs apply</p>
+        </div>
+    </div>
+</main>
+
+<footer class="footer">
+    <div class="container">
+        <p>© 2026 BonusHub - Premium Gaming Offers for US Players. All rights reserved.</p>
+        <p style="margin-top: 12px;">🎯 <strong>Top2BetX</strong>: <a href="https://top2betx.com/?promo=free500" rel="nofollow">https://top2betx.com/?promo=free500</a> | <strong>EZCasino</strong>: <a href="https://ezcasino.su/?promo=free500" rel="nofollow">https://ezcasino.su/?promo=free500</a></p>
+        <p style="margin-top: 16px;">18+ only. Please gamble responsibly. Bonuses subject to terms and conditions. This is an advertisement for affiliate partners.</p>
+        <p style="margin-top: 10px;">📍 Promo code FREE500 grants $500 bonus upon first deposit/registration. US players only. EU citizens welcome.</p>
+    </div>
+</footer>
+
+<!-- CONVERSION TRACKING SCRIPT -->
+<script>
+    (function() {
+        console.log("BonusHub Landing - FREE500 Promo Active");
+        // Track page view for analytics
+        if(typeof window !== 'undefined') {
+            window._bonusTracker = {
+                page: "dual_landing_free500",
+                timestamp: new Date().toISOString()
+            };
+        }
+    })();
+</script>
+
 </body>
 </html>
